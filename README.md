@@ -1,44 +1,47 @@
-Exploratory Data Analysis and Data Cleaning for Vacation Dataset
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+   
+# Read the data from the uploaded files
+vac = pd.read_csv('/mnt/data/vacation_complete_dataset.csv')
+vacmot_segmentation = pd.read_csv('/mnt/data/vacmot_segmentation_variables.csv')
+vacmot_descriptor = pd.read_csv('/mnt/data/vacmotdescriptor_variables.csv')
 
-1. Introduction
+# Inspect column names and dimensions
+print('Vacation Data Column Names:', vac.columns.tolist())
+print('Vacation Data Dimensions:', vac.shape)
 
-Overview of the data analysis process using Python.
-Objectives of the analysis.
-Brief description of the datasets:
-Vacation Complete Dataset
-Segmentation Variables Dataset
-Descriptor Variables Dataset
+print('Segmentation Variables Column Names:', vacmot_segmentation.columns.tolist())
+print('Segmentation Variables Dimensions:', vacmot_segmentation.shape)
 
-2. Data Loading and Inspection
+print('Descriptor Variables Column Names:', vacmot_descriptor.columns.tolist())
+print('Descriptor Variables Dimensions:', vacmot_descriptor.shape)
 
-Code used to load the datasets using Pandas.
-Display of column names and dimensions for each dataset.
-Purpose of inspecting data for understanding the structure.
+# Summary statistics for specific columns in the vacation dataset
+summary_cols = ['Gender', 'Age', 'Income', 'Income2']
+print(vac[summary_cols].describe(include='all'))
 
-3. Exploratory Data Analysis
+# Visualize gender distribution
+sns.countplot(x='Gender', data=vac)
+plt.title('Gender Distribution')
+plt.show()
 
-3.1. Gender Distribution
-Visualization using a count plot to represent the gender split.
+# Visualize age distribution
+sns.histplot(vac['Age'].dropna(), bins=30, kde=True)
+plt.title('Age Distribution')
+plt.show()
 
-3.2. Age Distribution
-Histogram to show the age spread among respondents.
-Discussion on the central tendency and age range.
+# Visualize income distribution using Income2
+sns.countplot(x='Income2', data=vac, order=vac['Income2'].value_counts().index)
+plt.xticks(rotation=45)
+plt.title('Income2 Distribution')
+plt.show()
 
-3.3. Income Distribution
-Count plot of income categories using Income2.
-Insights into the financial distribution of respondents.
+# Check for missing values
+missing_values = vac.isnull().sum()
+print('Missing Values in Vacation Data:\n', missing_values[missing_values > 0])
 
-4. Data Cleaning
-Identification of missing values using isnull().sum().
-Explanation of how missing values in Income and Income2 are handled.
-Justification for filling missing income with the median and setting Income2 to 'Unknown'.
-
-5. Results and Interpretation
-Summary of insights derived from the visualizations.
-Impact of the cleaning process on data quality.
-Potential next steps for further analysis.
-
-6. Conclusion
-Brief reflection on the outcomes of the exploratory data analysis.
-Importance of clean data for market segmentation analysis.
-
+# Replace missing Income with the median as an example
+vac['Income'].fillna(vac['Income'].median(), inplace=True)
+vac['Income2'].fillna('Unknown', inplace=True)
+print('Data Cleaning Complete.')
